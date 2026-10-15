@@ -1,0 +1,656 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#020604">
+<title>ALPHA // SYSTEM BREACHED</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+:root {
+    --green: #39ff88;
+    --red: #ff304f;
+    --bg: #020604;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--green);
+    font-family: 'Share Tech Mono', monospace;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        transparent 0px,
+        rgba(57,255,136,.035) 1px,
+        transparent 3px,
+        transparent 5px
+    );
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 4;
+    box-shadow: inset 0 0 100px #000;
+}
+
+#matrix {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .19;
+}
+
+.terminal {
+    position: relative;
+    z-index: 2;
+    width: min(900px, 94%);
+    height: min(700px, 90vh);
+    margin: 5vh auto;
+    border: 1px solid rgba(57,255,136,.5);
+    background: rgba(0, 8, 4, .88);
+    box-shadow: 0 0 30px rgba(57,255,136,.12);
+    display: flex;
+    flex-direction: column;
+}
+
+.topbar {
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(57,255,136,.3);
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+.dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+    margin-right: 6px;
+    box-shadow: 0 0 10px var(--red);
+}
+
+.content {
+    flex: 1;
+    padding: 22px;
+    overflow-y: auto;
+}
+
+.logo {
+    text-align: center;
+    font-size: clamp(27px, 6vw, 48px);
+    letter-spacing: 5px;
+    font-weight: bold;
+    text-shadow: 0 0 15px var(--green);
+    margin: 10px 0 4px;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 11px;
+    color: #8affb8;
+    letter-spacing: 3px;
+    margin-bottom: 28px;
+}
+
+.status {
+    border: 1px solid rgba(57,255,136,.3);
+    padding: 12px;
+    margin-bottom: 18px;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+#logs {
+    font-size: clamp(11px, 2.5vw, 14px);
+    line-height: 1.9;
+    overflow-wrap: anywhere;
+}
+
+.log {
+    margin: 4px 0;
+    animation: appear .25s ease;
+}
+
+.log::before {
+    content: "> ";
+    color: #8affb8;
+}
+
+.dim {
+    color: #75a989;
+}
+
+.warning {
+    color: var(--red);
+    text-shadow: 0 0 8px rgba(255,48,79,.5);
+}
+
+.success {
+    color: var(--green);
+}
+
+.cursor {
+    display: inline-block;
+    width: 8px;
+    height: 15px;
+    background: var(--green);
+    vertical-align: middle;
+    animation: blink .7s infinite;
+}
+
+.progress-wrap {
+    margin-top: 24px;
+    font-size: 11px;
+}
+
+.progress-bg {
+    height: 5px;
+    margin-top: 9px;
+    background: #102016;
+    overflow: hidden;
+}
+
+#progress {
+    height: 100%;
+    width: 0;
+    background: var(--green);
+    box-shadow: 0 0 12px var(--green);
+    transition: width .5s;
+}
+
+.footer {
+    padding: 12px 18px;
+    border-top: 1px solid rgba(57,255,136,.25);
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 10px;
+    color: #6d9d7e;
+}
+
+button {
+    font: inherit;
+    cursor: pointer;
+}
+
+.sound-btn {
+    position: fixed;
+    z-index: 10;
+    right: 16px;
+    top: 16px;
+    color: var(--green);
+    background: #04140b;
+    border: 1px solid var(--green);
+    padding: 9px 12px;
+    font-size: 11px;
+}
+
+.sound-btn:hover {
+    background: #0c2918;
+}
+
+#prankScreen {
+    position: fixed;
+    z-index: 20;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 24px;
+    text-align: center;
+    background: radial-gradient(ellipse, #102b19, #020604 70%);
+}
+
+#prankScreen.show {
+    display: flex;
+    animation: appear .6s ease;
+}
+
+.prank-emoji {
+    font-size: clamp(60px, 15vw, 110px);
+    animation: bounce 1s infinite alternate;
+}
+
+#prankScreen h1 {
+    color: var(--green);
+    font-size: clamp(25px, 6vw, 48px);
+    text-shadow: 0 0 20px var(--green);
+    margin: 15px 0;
+}
+
+#prankScreen p {
+    max-width: 500px;
+    line-height: 1.8;
+    color: #b2ffc9;
+}
+
+.restart {
+    margin-top: 20px;
+    padding: 13px 22px;
+    border: 1px solid var(--green);
+    background: transparent;
+    color: var(--green);
+}
+
+.restart:hover {
+    color: #001407;
+    background: var(--green);
+}
+
+#secretHint {
+    position: fixed;
+    z-index: 10;
+    bottom: 12px;
+    right: 14px;
+    color: #486a52;
+    font-size: 10px;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+@keyframes appear {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounce {
+    to { transform: translateY(-12px) rotate(5deg); }
+}
+
+@media (max-width: 500px) {
+    .terminal {
+        height: 86vh;
+        margin: 7vh auto;
+    }
+
+    .content {
+        padding: 15px;
+    }
+
+    .logo {
+        letter-spacing: 2px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<button class="sound-btn" id="soundButton" type="button">
+    🔊 SOUND: OFF
+</button>
+
+<main class="terminal" id="terminal">
+    <header class="topbar">
+        <span><span class="dot"></span> ALPHA TERMINAL v4.0</span>
+        <span id="connection">SIMULATION MODE</span>
+    </header>
+
+    <section class="content">
+        <div class="logo">ALPHA SYSTEM</div>
+        <div class="subtitle">// ADVANCED SECURITY INTERFACE //</div>
+
+        <div class="status">
+            <span>STATUS: <span id="statusText">INITIALIZING</span></span>
+            <span>ENCRYPTION: DEMO</span>
+            <span id="clock">00:00:00</span>
+        </div>
+
+        <div id="logs" aria-live="polite"></div>
+        <div><span class="cursor"></span></div>
+
+        <div class="progress-wrap">
+            <div>SIMULATION PROGRESS: <span id="percent">0%</span></div>
+            <div class="progress-bg">
+                <div id="progress"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <span>LOCAL DEMO // NO DATA ACCESS</span>
+        <span>ALPHA AI © 2026</span>
+    </footer>
+</main>
+
+<div id="secretHint">RAHASIA: TEKAN X ATAU ESC 3X</div>
+
+<section id="prankScreen" role="status" aria-live="polite">
+    <div class="prank-emoji">😆</div>
+    <h1>SELAMAT, ANDA KENA PRANK!</h1>
+    <p>
+        Tenang, perangkatmu aman!<br>
+        Semua proses tadi hanyalah animasi simulasi
+        yang dibuat oleh ALPHA.
+    </p>
+    <p style="color:#39ff88">SYSTEM STATUS: AMAN ✓</p>
+    <button class="restart" id="restartButton" type="button">
+        ↻ ULANGI PRANK
+    </button>
+</section>
+
+<script>
+"use strict";
+
+const $ = (selector) => document.querySelector(selector);
+
+const logsElement = $("#logs");
+const progressElement = $("#progress");
+const percentElement = $("#percent");
+const statusText = $("#statusText");
+const prankScreen = $("#prankScreen");
+const soundButton = $("#soundButton");
+
+let audioContext = null;
+let soundEnabled = false;
+let stopped = false;
+let runId = 0;
+let secretPresses = 0;
+let secretTimer = null;
+let startTime = Date.now();
+
+const messages = [
+    { text: "ALPHA AI boot sequence initiated...", type: "dim" },
+    { text: "Memeriksa integritas sistem...", type: "success" },
+    { text: "Mendeteksi alamat IP... [SIMULASI]", type: "success" },
+    { text: "Memindai port jaringan virtual...", type: "success" },
+    { text: "Mengakses direktori sistem... [DEMO]", type: "success" },
+    { text: "Menjalankan protokol keamanan...", type: "dim" },
+    { text: "Menganalisis file multimedia... [PALSU]", type: "success" },
+    { text: "Mengunduh foto dan kontak... [SIMULASI]", type: "warning" },
+    { text: "Mengenkripsi database virtual...", type: "warning" },
+    { text: "PERINGATAN: AKSES SISTEM TERDETEKSI!", type: "warning" },
+    { text: "Memverifikasi firewall...", type: "dim" },
+    { text: "PROTOKOL LOCKDOWN DIINISIALISASI...", type: "warning" },
+    { text: "PERANGKAT ANDA TELAH DIKUNCI! [EFEK VISUAL]", type: "warning" }
+];
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function playBeep(frequency = 700, duration = 0.035) {
+    if (!soundEnabled || !audioContext || stopped) return;
+
+    try {
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        oscillator.type = "square";
+        oscillator.frequency.value = frequency;
+        gain.gain.setValueAtTime(0.025, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(
+            0.001,
+            audioContext.currentTime + duration
+        );
+
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
+
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + duration);
+    } catch (error) {
+        console.warn("Audio tidak tersedia:", error);
+    }
+}
+
+async function enableSound() {
+    try {
+        const AudioContextClass =
+            window.AudioContext || window.webkitAudioContext;
+
+        if (!AudioContextClass) {
+            soundButton.textContent = "AUDIO TIDAK DIDUKUNG";
+            return;
+        }
+
+        if (!audioContext) {
+            audioContext = new AudioContextClass();
+        }
+
+        if (audioContext.state === "suspended") {
+            await audioContext.resume();
+        }
+
+        soundEnabled = true;
+        soundButton.textContent = "🔊 SOUND: ON";
+        playBeep(900, 0.08);
+    } catch (error) {
+        soundEnabled = false;
+        soundButton.textContent = "AUDIO TIDAK TERSEDIA";
+        console.warn("Audio gagal diaktifkan:", error);
+    }
+}
+
+soundButton.addEventListener("click", async () => {
+    if (soundEnabled) {
+        soundEnabled = false;
+        soundButton.textContent = "🔇 SOUND: OFF";
+    } else {
+        await enableSound();
+    }
+});
+
+async function typeMessage(message, currentRun) {
+    if (stopped || currentRun !== runId) return;
+
+    const line = document.createElement("div");
+    line.className = "log " + (message.type || "");
+    logsElement.appendChild(line);
+
+    for (const character of message.text) {
+        if (stopped || currentRun !== runId) return;
+
+        line.textContent += character;
+
+        if (character !== " " && Math.random() > 0.7) {
+            playBeep(400 + Math.random() * 500, 0.025);
+        }
+
+        await sleep(17 + Math.random() * 20);
+    }
+
+    logsElement.scrollTop = logsElement.scrollHeight;
+}
+
+async function startPrank() {
+    runId++;
+    const currentRun = runId;
+
+    stopped = false;
+    secretPresses = 0;
+    startTime = Date.now();
+
+    prankScreen.classList.remove("show");
+    $("#terminal").style.display = "flex";
+    $("#secretHint").style.display = "block";
+
+    logsElement.replaceChildren();
+    progressElement.style.width = "0%";
+    percentElement.textContent = "0%";
+    statusText.textContent = "INITIALIZING";
+    statusText.className = "";
+
+    for (let i = 0; i < messages.length; i++) {
+        if (stopped || currentRun !== runId) return;
+
+        await typeMessage(messages[i], currentRun);
+
+        if (stopped || currentRun !== runId) return;
+
+        const progress = Math.round(((i + 1) / messages.length) * 100);
+
+        progressElement.style.width = progress + "%";
+        percentElement.textContent = progress + "%";
+
+        statusText.textContent =
+            i >= 9 ? "CRITICAL" : "PROCESSING";
+
+        statusText.className = i >= 9 ? "warning" : "";
+
+        await sleep(350);
+    }
+
+    if (stopped || currentRun !== runId) return;
+
+    statusText.textContent = "LOCKDOWN SIMULATION";
+    statusText.className = "warning";
+
+    await sleep(1800);
+
+    if (!stopped && currentRun === runId) {
+        revealPrank();
+    }
+}
+
+function revealPrank() {
+    stopped = true;
+    runId++;
+
+    $("#terminal").style.display = "none";
+    $("#secretHint").style.display = "none";
+    prankScreen.classList.add("show");
+
+    playBeep(880, 0.12);
+}
+
+function stopPrank() {
+    if (stopped) return;
+
+    stopped = true;
+    runId++;
+
+    revealPrank();
+}
+
+document.addEventListener("keydown", (event) => {
+    if (event.repeat) return;
+
+    if (event.key.toLowerCase() === "x" || event.key === "Escape") {
+        secretPresses++;
+
+        clearTimeout(secretTimer);
+
+        if (secretPresses >= 3) {
+            stopPrank();
+        } else {
+            secretTimer = setTimeout(() => {
+                secretPresses = 0;
+            }, 1800);
+        }
+    }
+});
+
+$("#restartButton").addEventListener("click", () => {
+    startPrank();
+});
+
+function updateClock() {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    const hours = String(Math.floor(elapsed / 3600)).padStart(2, "0");
+    const minutes = String(Math.floor((elapsed % 3600) / 60)).padStart(2, "0");
+    const seconds = String(elapsed % 60).padStart(2, "0");
+
+    $("#clock").textContent = `${hours}:${minutes}:${seconds}`;
+}
+
+setInterval(updateClock, 1000);
+
+// Matrix background animation
+const canvas = $("#matrix");
+const ctx = canvas.getContext("2d");
+
+let columns = [];
+let fontSize = 15;
+let matrixAnimationId = 0;
+
+function resizeMatrix() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    canvas.width = Math.floor(window.innerWidth * dpr);
+    canvas.height = Math.floor(window.innerHeight * dpr);
+    canvas.style.width = window.innerWidth + "px";
+    canvas.style.height = window.innerHeight + "px";
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const count = Math.ceil(window.innerWidth / fontSize);
+    columns = Array.from(
+        { length: count },
+        () => Math.random() * window.innerHeight / fontSize
+    );
+}
+
+function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 6, 3, 0.09)";
+    ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+    ctx.fillStyle = "#39ff88";
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < columns.length; i++) {
+        const character = Math.random() > 0.5 ? "1" : "0";
+        const x = i * fontSize;
+        const y = columns[i] * fontSize;
+
+        ctx.fillText(character, x, y);
+
+        if (y > window.innerHeight && Math.random() > 0.975) {
+            columns[i] = 0;
+        } else {
+            columns[i] += 0.6;
+        }
+    }
+
+    matrixAnimationId = requestAnimationFrame(drawMatrix);
+}
+
+window.addEventListener("resize", resizeMatrix);
+
+resizeMatrix();
+drawMatrix();
+startPrank();
+</script>
+
+</body>
+</html>
